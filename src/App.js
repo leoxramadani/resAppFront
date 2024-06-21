@@ -1,24 +1,46 @@
-import logo from './logo.svg';
 import './App.css';
+import Navbar from './components/Navbar/Navbar';
+import TableCard from './components/Cards/TableCard'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home/Home';
+import Kamarierat from './pages/Kamarierat/Kamarierat';
+import OrderContextProvider from './store/orderContext';
+import Porosite from './pages/Porosite/Porosite';
+import { Login } from './pages/Login/Login';
+import Produktet from './pages/Produktet/Produktet';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
+
+const queryClient = new QueryClient()
 
 function App() {
+
+
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <QueryClientProvider client={queryClient}>
+        <OrderContextProvider>
+        {/* <TableCard/> */}
+        <BrowserRouter>
+          <Navbar/>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/Login" element={<Login/>} />
+            <Route path="/tables" element={<TableCard />} />
+            <Route path="/kamarierat" element={<Kamarierat/>} />
+            <Route path="/porosite" element={<Porosite/>} />
+            <Route path="/produktet" element={<Produktet/>} />
+          </Routes>
+        </BrowserRouter>
+        </OrderContextProvider>
+      </QueryClientProvider>
     </div>
+
+
   );
 }
 
