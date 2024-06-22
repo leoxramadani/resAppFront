@@ -17,6 +17,7 @@ export default function ProductModal({setOpen,open,modalType,rowType,displayedRo
 
 const [categories,setCategories] = React.useState();
 
+//get all products
 React.useEffect(()=>{
   const getCategories = async () => {
     try{
@@ -28,6 +29,15 @@ React.useEffect(()=>{
   };
   getCategories();
 },[])
+
+//create new category
+
+const [newCategory,setNewCategory] = React.useState("");
+
+React.useEffect(()=>{
+  const createNewCategory = await 
+})
+
 
   return (
     <React.Fragment>
@@ -79,7 +89,7 @@ React.useEffect(()=>{
                       defaultValue="" // Ensure a default value is set
                     >
                         {rowType == "Edit" ? 
-                          <Option value="" disabled>{displayedRowClicked.categoryName}</Option>
+                          <Option value={displayedRowClicked.categoryId} disabled>{displayedRowClicked.categoryName}</Option>
                           :
                           <Option value="" disabled>Shtoni nje produkt te ri</Option>
                         }

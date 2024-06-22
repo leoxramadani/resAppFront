@@ -59,7 +59,6 @@ function labelDisplayedRows({ from, to, count }) {
       setRowType(param);
   }
 
-
   
   return (
     <Box sx={{ width: '100%' }}>
