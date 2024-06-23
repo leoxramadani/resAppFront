@@ -4,32 +4,32 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import MenuCard from '../Cards/MenuCard';
 import CheckboxList from '../Lists/CheckboxList';
+import axios from 'axios';
+import { GET_ALL_CATEGORIES_BY_ID } from '../../endpoints/MenuItems/MenuItemsEnd';
 
 
 export default function ChildModal({ openChild, handleCloseChild, item ,menuClickedItem, style, setOrderItems, order, setOrder}) {
 
-    let obj = [];
-    if(menuClickedItem){
-      if(menuClickedItem.title=='Kafe'){
-        obj = [
-                {'key':1,'Name':'Espresso'},
-                {'key':2,'Name':'Dopio Espresso'},
-                {'key':3,'Name':'Machiato'},
-                {'key':4,'Name':'Latte Machiato'},
-                {'key':5,'Name':'Americano'},
-              ];
-      }
-      else if (menuClickedItem.title=='Hamburger'){
-        obj = [
-                {'key':1,'Name':'Hamburger classic'},
-                {'key':2,'Name':'Hamburger shpije'},
-                {'key':3,'Name':'Hamburger me stek'},
-                {'key':4,'Name':'Hamburger sharri'},
-                {'key':5,'Name':'Tost'},
-              ]
-      }
-    }
+  const [obj,setObj] = React.useState([]);
   
+  React.useEffect(()=>{
+    try{
+      const getMenuItems = async (id) =>{
+        const res = await axios.get(GET_ALL_CATEGORIES_BY_ID, 
+          {params: { CategoryId: id },
+          withCredentials: true});
+          setObj(res.data);
+      }
+      getMenuItems(3);
+    }catch(error){
+      console.error("Error=",error)
+    }
+  },[])
+
+  console.log("obj=",obj)
+
+  
+
     return (
       <React.Fragment>
         <Modal

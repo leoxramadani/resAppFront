@@ -23,13 +23,12 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 //   createData('4', 305, 3.7, 67, 4.3),
 // ];
 
-export default function TableColumnPinning({rows,open, setOpen,setRowType,setDisplayedRow}) {
-
-   
-function labelDisplayedRows({ from, to, count }) {
+export default function TableColumnPinning({rows=[],open, setOpen,setRowType,setDisplayedRow,datafor}) {
+  console.log("rows=",rows)
+  function labelDisplayedRows({ from, to, count }) {
     return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
   }
-  
+
   const getLabelDisplayedRowsTo = (rows, page, rowsPerPage) => {
     if (rows && rows.length === -1) {
       return (page + 1) * rowsPerPage;
@@ -38,27 +37,27 @@ function labelDisplayedRows({ from, to, count }) {
       ? rows && rows.length
       : Math.min(rows && rows.length, (page + 1) * rowsPerPage);
   };
-  
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    
-  
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
-    const handleChangePage = (newPage) => {
-      setPage(newPage);
-    };
-  
-    const displayedRows = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const rowClicked = (param) =>{
-      setOpen(true)
-      setRowType(param);
-  }
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
+  const handleChangePage = (newPage) => {
+    setPage(newPage);
+  };
+
+  const displayedRows = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+  const rowClicked = (param) => {
+    setOpen(true);
+    setRowType(param);
+  };
+
+  
   
   return (
     <Box sx={{ width: '100%' }}>
@@ -112,18 +111,39 @@ function labelDisplayedRows({ from, to, count }) {
         >
           <thead>
             <tr style={{textAlign:"center"}}>
+              {datafor == "products" ? 
+              <>              
+                <th style={{ width: '25%',textAlign:"center" }}>Kategoria</th>
+                <th style={{ width: '25%',textAlign:"center" }}>Produkti</th>
+                <th style={{ width: '25%',textAlign:"center" }}>Cmimi</th>
+                <th style={{ width: '25%',textAlign:"center"}}>Ndryshimet</th>
+               </> : datafor == "categories" ? <>
+               
+               <th style={{ width: '25%',textAlign:"center" }}>Id</th>
               <th style={{ width: '25%',textAlign:"center" }}>Kategoria</th>
-              <th style={{ width: '25%',textAlign:"center" }}>Produkti</th>
-              <th style={{ width: '25%',textAlign:"center" }}>Cmimi</th>
+              <th style={{ width: '25%',textAlign:"center" }}>Krijuar nga</th>
               <th style={{ width: '25%',textAlign:"center"}}>Ndryshimet</th>
+              
+              </> : ""}
+
             </tr>
           </thead>
           <tbody>
             {displayedRows && displayedRows.map((row) => (
-              <tr key={row.id}>
-                <td>{row.categoryName}</td>
-                <td>{row.name}</td>
-                <td>{row.price}</td>
+              <tr key={row.id} style={{textAlign:"center"}}>
+                {datafor == "products" ? 
+                <>
+                  <td>{row.categoryName}</td>
+                  <td>{row.name}</td>
+                  <td>{row.price}</td>
+                </> : 
+                  datafor == "categories" ? 
+                  <>
+                    <td>{row.id}</td>
+                    <td>{row.categoryName}</td>
+                    <td>{row.createdBy}</td>
+                  </> 
+                  : ""}
                 <td className='w-[200px]'>
                   <Box sx={{ display: 'flex', gap: 1 , justifyContent:"center",width:"200"}}>
                     <Button size="sm" variant="plain" color="neutral" onClick={()=>{rowClicked("Edit");setDisplayedRow(row)}}>

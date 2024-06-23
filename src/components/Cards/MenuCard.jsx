@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 export default function MenuCard({ item, onOpenChildModal }) {
+
   return (
     <Card sx={{ 
             minWidth: 200, 
@@ -21,10 +22,10 @@ export default function MenuCard({ item, onOpenChildModal }) {
         >
       <CardContent >
         <Typography variant="body2">
-          <img src={item?.image} alt={item?.title}  className='w-[150px] h-[150px]'/>
+          <img src={item?.photo} alt={item?.categoryName}  className='w-[150px] h-[150px]'/>
         </Typography>
         <Typography sx={{ fontSize: 14,textAlign:'center' }} color="text.secondary" gutterBottom>
-          {item?.title}
+          {item?.categoryName}
         </Typography>
 
       </CardContent>

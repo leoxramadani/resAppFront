@@ -9,10 +9,10 @@ import DialogTitle from '@mui/joy/DialogTitle';
 import Stack from '@mui/joy/Stack';
 import { Option, Select } from '@mui/joy';
 import axios from 'axios';
-import { GET_ALL_CATEGORIES } from '../../endpoints/MenuItems/MenuItemsEnd';
+import { CREATE_NEW_CATEGORY, CREATE_NEW_PRODUCT, GET_ALL_CATEGORIES } from '../../endpoints/MenuItems/MenuItemsEnd';
 
 
-export default function ProductModal({setOpen,open,modalType,rowType,displayedRowClicked}) {
+export default function ProductModal({setOpen,open,modalType,rowType,displayedRowClicked,setCategoryCreateResult,setMenuItemCreateResult}) {
 
 
 const [categories,setCategories] = React.useState();
@@ -32,12 +32,38 @@ React.useEffect(()=>{
 
 //create new category
 
-const [newCategory,setNewCategory] = React.useState("");
+const [newCategory,setNewCategory] = React.useState(displayedRowClicked?.name || "");
+const [newPrice,setNewPrice] = React.useState("");
+const [newCategoryId,setNewCategoryId] = React.useState();
 
-React.useEffect(()=>{
-  const createNewCategory = await 
-})
 
+
+const createNewCategory = async (categoryName) => {
+  try {
+    const res = await axios.post(CREATE_NEW_CATEGORY, { categoryName: categoryName }, { withCredentials: true });
+    setCategoryCreateResult(res.data.data);
+  } catch (error) {
+    console.error("Error=", error);
+  }
+};
+
+
+const createNewProduct = async (newCategory,newCategoryId,newPrice) => {
+  try{
+    const res = await axios.post(CREATE_NEW_PRODUCT, {name: newCategory,price: newPrice, categoryId: newCategoryId}, {withCredentials:true});
+    setMenuItemCreateResult(res.data.data)
+  }catch(error){
+    console.error("Error=",error)
+  }
+};
+
+
+const handleChange = (event, newValue) => {
+  setNewCategoryId(newValue);
+};
+
+
+  console.log("displayedRowClicked=",displayedRowClicked)
 
   return (
     <React.Fragment>
@@ -54,6 +80,7 @@ React.useEffect(()=>{
           <form
             onSubmit={(event) => {
               event.preventDefault();
+              modalType=="Category" ? createNewCategory(newCategory) : createNewProduct(newPrice,newCategoryId, newCategory)
               setOpen(false);
             }}
           >
@@ -62,9 +89,19 @@ React.useEffect(()=>{
                 <FormLabel>Emri i {modalType !== 'null' && modalType == "Category" ? "kategorise" : 'produktit'}</FormLabel>
                 {rowType == "Edit" 
                 ? 
-                <Input autoFocus required defaultValue={displayedRowClicked?.name}/>
+                <Input 
+                  autoFocus 
+                  required 
+                  defaultValue={displayedRowClicked?.name}
+                  onChange={(e) => setNewCategory(e.target.value)}  
+                />
                 :
-                <Input autoFocus required defaultValue=""/>
+                <Input 
+                  autoFocus 
+                  required 
+                  defaultValue=""
+                  onChange={(e) => setNewCategory(e.target.value)}  
+                />
                 
                 } 
               </FormControl>
@@ -73,29 +110,35 @@ React.useEffect(()=>{
                     <FormControl>
                     <FormLabel>Cmimi</FormLabel>
                     {rowType == "Edit" ? 
-                      <Input required defaultValue={displayedRowClicked.price}/>
+                      <Input required 
+                             defaultValue={displayedRowClicked.price}
+                             
+                      />
                       :
-                      <Input required />
+                      <Input required 
+                             onChange={(e)=> setNewPrice(e.target.value)}
+                      />
                     }
                     </FormControl>
 
                     <FormControl>
                     <FormLabel>Kategoria</FormLabel>
                     <Select
-                      placeholder="Kategoria e produktit"
-                      name="foo"
                       required
                       sx={{ minWidth: 200 }}
-                      defaultValue="" // Ensure a default value is set
+                      defaultValue={displayedRowClicked.categoryId} // Ensure a default value is set
+                      onChange={handleChange}
                     >
                         {rowType == "Edit" ? 
-                          <Option value={displayedRowClicked.categoryId} disabled>{displayedRowClicked.categoryName}</Option>
+                          <Option value={displayedRowClicked.categoryId} disabled>
+                            {displayedRowClicked.categoryName}
+                          </Option>
                           :
-                          <Option value="" disabled>Shtoni nje produkt te ri</Option>
+                          <Option value="" disabled >Shtoni nje produkt te ri</Option>
                         }
                       
                       {categories.map((category) => (
-                        <Option key={category.id} value={category.id}>
+                        <Option key={category.id} value={category.id} >
                           {category.categoryName}
                         </Option>
                       ))}

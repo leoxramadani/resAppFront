@@ -6,6 +6,8 @@ import CardContent from '@mui/joy/CardContent';
 import Chip from '@mui/joy/Chip';
 import Typography from '@mui/joy/Typography';
 import BasicModal from '../Modals/BasicModal';
+import { GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
+import axios from 'axios';
 
 export default function KamarierCard({item}) {
 
@@ -23,6 +25,26 @@ export default function KamarierCard({item}) {
     setOpen(false);
   };
 
+
+  const [tavolinat,setTavolinat] = React.useState();
+
+
+  const getTavolinat = async(id) => {
+    try{
+      console.log("id=",id)
+      const res = await axios.get(GET_MY_TABLES,
+                                 {params: { waiterId: id },
+                                 withCredentials: true}
+                                 );
+      setTavolinat(res.data);
+      console.log("res=",res.data)
+    }catch(error){
+      console.error("Error=",error);
+    }
+  }
+
+
+
   return (
     <>
     <Card
@@ -37,7 +59,7 @@ export default function KamarierCard({item}) {
         color:'white',
         '&:hover': { boxShadow: 'md', borderColor: 'neutral.outlinedHoverBorder' },
       }}
-      onClick={()=>{handleOpen(item)}}
+      onClick={()=>{handleOpen(item);getTavolinat(item.id)}}
     >
       <AspectRatio ratio="1" sx={{ width: 90 }}>
         <img
@@ -73,7 +95,9 @@ export default function KamarierCard({item}) {
         {/* <KamarieratModal key={item.key} open={open} handleClose={handleClose} item={selectedItem}/> */}
       </CardContent>
       
-    </Card><BasicModal open={open} handleClose={handleClose} item={selectedItem} /></>
+    </Card>
+    <BasicModal open={open} handleClose={handleClose} item={item} tavolinat={tavolinat}/>
+    </>
     
   );
 }

@@ -3,15 +3,51 @@ import TableColumnPinning from '../../components/Table/Table'
 import ProductModal from '../../components/Modals/ProductModal'
 import Add from '@mui/icons-material/Add';
 import Button from '@mui/joy/Button';
-import { GET_ALL_PRODUCTS } from '../../endpoints/MenuItems/MenuItemsEnd';
+import { GET_ALL_CATEGORIES, GET_ALL_PRODUCTS } from '../../endpoints/MenuItems/MenuItemsEnd';
 import axios from 'axios';
-
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import Tabs from '@mui/joy/Tabs';
+import TabList from '@mui/joy/TabList';
+import Tab from '@mui/joy/Tab';
+import TabPanel from '@mui/joy/TabPanel';
 
 function Produktet() {
 
   const [products,setProducts] = useState([]);
 
+  const [categoryCreateResult,setCategoryCreateResult] = useState("");
+  const [menuItemCreateResult,setMenuItemCreateResult] = useState("");
 
+  useEffect(()=>{
+    if(categoryCreateResult == "Success"){
+      toast.success("Kategoria u krijua me sukses!")
+      setCategoryCreateResult("");
+    }
+    else if(categoryCreateResult == "Exists"){
+      toast.warning("Kategoria ekziston!")
+      setCategoryCreateResult("");
+    }
+    else if(categoryCreateResult == "Failure"){
+      toast.error("Nuk mund te shtoni kategori te re!");
+      setCategoryCreateResult("");
+    }
+  },[categoryCreateResult])
+
+  useEffect(()=>{
+    if(menuItemCreateResult == "Success"){
+      toast.success("Produkti u krijua me sukses!")
+      setCategoryCreateResult("");
+    }
+    else if(menuItemCreateResult == "Exists"){
+      toast.warning("Produkti ekziston!")
+      setCategoryCreateResult("");
+    }
+    else if(menuItemCreateResult == "Failure"){
+      toast.error("Nuk mund te shtoni produkt te ri!");
+      setCategoryCreateResult("");
+    }
+  },[menuItemCreateResult])
 
 
   useEffect(() => {
@@ -25,7 +61,23 @@ function Produktet() {
     };
     getProducts();
   }, []);
+  console.log("products=",products);
 
+
+  const [categories,setCategories] = React.useState();
+
+  //get all products
+  React.useEffect(()=>{
+    const getCategories = async () => {
+      try{
+        const res = await axios.get(GET_ALL_CATEGORIES,{withCredentials:true});
+        setCategories(res.data);
+      }catch(error){
+        console.error("Error=",error);
+      }
+    };
+    getCategories();
+  },[])
 
 
   // const rows = [
@@ -83,12 +135,28 @@ function Produktet() {
         >
           Shto produktet
         </Button>
-        <ProductModal setOpen={setOpen} open={open} modalType={modalType} rowType={rowType} displayedRowClicked={displayedRowClicked}/>
+        <ProductModal setOpen={setOpen} open={open} modalType={modalType} rowType={rowType} displayedRowClicked={displayedRowClicked} setCategoryCreateResult={setCategoryCreateResult} setMenuItemCreateResult={setMenuItemCreateResult}/>
       </div>
       <div className='w-[90vw] h-[50vh]  mt-10'>
-        <TableColumnPinning rows={products} open={open} setOpen={setOpen} setDisplayedRow={setDisplayedRow} rowType={rowType} setRowType={setRowType}/>
+      <Tabs aria-label="Basic tabs" defaultValue={0}>
+        <TabList>
+          <Tab>Kategorite</Tab>
+          <Tab>Produktet</Tab>
+        </TabList>
+
+        <TabPanel value={0}>
+          <TableColumnPinning rows={categories} datafor={"categories"} open={open} setOpen={setOpen} setDisplayedRow={setDisplayedRow} rowType={rowType} setRowType={setRowType}/>
+        </TabPanel>
+
+        <TabPanel value={1}>
+          <TableColumnPinning rows={products} datafor={"products"} open={open} setOpen={setOpen} setDisplayedRow={setDisplayedRow} rowType={rowType} setRowType={setRowType}/>
+        </TabPanel>
+
+      </Tabs>
       </div>
+      <ToastContainer/>
     </div>
+    
   )
 }
 

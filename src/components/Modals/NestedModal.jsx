@@ -4,6 +4,8 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import MenuCard from '../Cards/MenuCard';
 import ChildModal from './ChildModal';
+import axios from 'axios';
+import { GET_ALL_CATEGORIES} from '../../endpoints/MenuItems/MenuItemsEnd';
 
 const style = {
     position: 'absolute',
@@ -25,31 +27,41 @@ const style = {
     overflowY:"hidden",
     display:"relative",
   };
-  
-  //   const childStyle = {
-  //   ...style,
-  //   width: '60vw',
-  //   maxWidth: '400px',
-  //   height: '40vh',
-  //   maxHeight: '400px',
-  //   overFlowX: 'hidden'
-  // };
 
-const menuItems = [
-    {"key":1,"title":"Kafe","image":"https://static.vecteezy.com/system/resources/previews/029/283/233/original/coffee-coffee-coffee-clipart-transparent-background-ai-generative-free-png.png"},
-    {"key":2,"title":"Hamburger","image":"https://png.pngtree.com/png-clipart/20230325/original/pngtree-juicy-burgers-with-a-transparent-background-png-image_9002761.png"},
-    {"key":3,"title":"Pizza","image":"https://www.freepnglogos.com/uploads/pizza-png/pizza-images-download-pizza-19.png"},
-    {"key":4,"title":"Pasta","image":"https://png.pngtree.com/png-clipart/20230523/ourmid/pngtree-spaghetti-bolognese-png-image_7106276.png"},
-    {"key":5,"title":"Salads","image":"https://static.vecteezy.com/system/resources/previews/018/128/193/non_2x/delicious-spinach-salad-with-fresh-png.png"},
-    {"key":6,"title":"Deserts","image":"https://t4.ftcdn.net/jpg/06/23/72/35/360_F_623723556_DrvnR2gKDKy4rPM5IN8kUw0VnwQoeCog.jpg"},
-    {"key":7,"title":"Drinks","image":"https://www.kindpng.com/picc/m/50-503199_cold-drinks-bottle-png-cold-drink-bottle-png.png"},
-    {"key":8,"title":"Extras","image":"https://static.vecteezy.com/system/resources/thumbnails/035/321/652/small_2x/french-fries-no-background-png.png"},
+
+
+
+// const menuItems = [
+//     {"key":1,"title":"Kafe","image":"https://static.vecteezy.com/system/resources/previews/029/283/233/original/coffee-coffee-coffee-clipart-transparent-background-ai-generative-free-png.png"},
+//     {"key":2,"title":"Hamburger","image":"https://png.pngtree.com/png-clipart/20230325/original/pngtree-juicy-burgers-with-a-transparent-background-png-image_9002761.png"},
+//     {"key":3,"title":"Pizza","image":"https://www.freepnglogos.com/uploads/pizza-png/pizza-images-download-pizza-19.png"},
+//     {"key":4,"title":"Pasta","image":"https://png.pngtree.com/png-clipart/20230523/ourmid/pngtree-spaghetti-bolognese-png-image_7106276.png"},
+//     {"key":5,"title":"Salads","image":"https://static.vecteezy.com/system/resources/previews/018/128/193/non_2x/delicious-spinach-salad-with-fresh-png.png"},
+//     {"key":6,"title":"Deserts","image":"https://t4.ftcdn.net/jpg/06/23/72/35/360_F_623723556_DrvnR2gKDKy4rPM5IN8kUw0VnwQoeCog.jpg"},
+//     {"key":7,"title":"Drinks","image":"https://www.kindpng.com/picc/m/50-503199_cold-drinks-bottle-png-cold-drink-bottle-png.png"},
+//     {"key":8,"title":"Extras","image":"https://static.vecteezy.com/system/resources/thumbnails/035/321/652/small_2x/french-fries-no-background-png.png"},
   
-  ]
+//   ]
 
 
 
 const NestedModal = React.forwardRef(({ open, handleClose, item}, ref) => {
+
+
+  const [menuItems,setMenuItems] = React.useState([]);
+  const [categoryId,setCategoryId] = React.useState();
+    React.useEffect(()=>{
+      try{
+        const getMenuItems = async () =>{
+          const res = await axios.get(GET_ALL_CATEGORIES,{withCredentials:true});
+          setMenuItems(res.data);
+        }
+        getMenuItems();
+      }catch(error){
+        console.error("Error=",error)
+      }
+    },[])
+
 
     const [openChild, setOpenChild] = React.useState(false);
     const [orderItems, setOrderItems] = React.useState();
@@ -138,7 +150,7 @@ const NestedModal = React.forwardRef(({ open, handleClose, item}, ref) => {
           }}
         >
           {menuItems.length > 0 && menuItems.map((menuItem) => (
-            <MenuCard key={menuItem.key} item={menuItem} onOpenChildModal={()=>handleOpenChild(menuItem)} />
+            <MenuCard key={menuItem.id} item={menuItem} onOpenChildModal={()=>handleOpenChild(menuItem)} />
           ))}
         </Box>
         <ChildModal openChild={openChild} handleCloseChild={handleCloseChild} item={item} menuClickedItem={menuClickedItem} style={style} setOrderItems={setOrderItems} order={order} setOrder={setOrder}/>
