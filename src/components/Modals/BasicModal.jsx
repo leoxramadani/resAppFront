@@ -3,8 +3,9 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Button } from '@mui/material';
 import axios from 'axios';
-import { GET_FREE_TABLES, GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
-import { Option, Select } from '@mui/joy';
+import { ASSING_TABLE_WAITER, GET_FREE_TABLES, GET_MY_TABLES, REMOVE_WAITER_TABLE } from '../../endpoints/TableWaiters/TableWaitersEnd';
+import { Add, AddBox, DeleteForever } from '@mui/icons-material';
+import useQuery from '../../components/hooks/useQuery';
 
 const style = {
   position: 'absolute',
@@ -20,32 +21,35 @@ const style = {
 
 };
 
-export default function BasicModal({ open, handleClose, item,tavolinat }) {
-  const [selectedTables, setSelectedTables] = React.useState([]);
+export default function BasicModal({refetchMyTables, open,freeTables, handleClose, item,tavolinat ,setRemoveStatus,setAddTableStatus}) {
 
-  const [freeTables,setFreeTables] = React.useState([]);
-  
-  React.useEffect(()=>{
-    if(tavolinat){
-      const tableNumbers = tavolinat.map(item=>item.tableNumber);
-      setSelectedTables(tableNumbers);
+
+  const { refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
+
+  const removeEmp = async (waiterId, tableId) => {
+    try {
+        const res = await axios.post(`${REMOVE_WAITER_TABLE}/${tableId}/${waiterId}`, null, { withCredentials: true });
+        setRemoveStatus(res.data.succeeded);
+        refetchMyTables();
+        refetchFreeTables();
+        handleClose();
+    } catch (error) {
+        console.error("Error:", error);
     }
-  },[])
+}
 
 
-  React.useEffect(()=>{
-    const getFreeTables = async () => {
-      try{
-        const res = await axios.get(GET_FREE_TABLES,{withCredentials:true});
-        setFreeTables(res.data)
-      }
-      catch(error){
-        console.error("error=",error)
-      }
-    }
-    getFreeTables();
-  },[])
-
+const addEmpTable = async (waiterId,tableId) => {
+  try{
+      const res = await axios.post(`${ASSING_TABLE_WAITER}/${tableId}/${waiterId}`, null, {withCredentials:true});
+      setAddTableStatus(res.data.succeeded);
+      refetchMyTables();
+      handleClose();
+      refetchFreeTables();
+  }catch(error){
+    console.error("Error=",error);
+  }
+}
   return (
     <div>
       <Modal
@@ -69,30 +73,29 @@ export default function BasicModal({ open, handleClose, item,tavolinat }) {
           <div>
             <p>Pergjegjes per tavolinat: </p>
             <div className='w-full h-auto flex flex-wrap justify-between '>
-              {tavolinat && tavolinat.map((tav, index) => (
-                <p key={index} className='p-1 rounded-xl bg-blue-100'>Tav. {tav.tableNumber}</p>
-              ))}
+              {tavolinat.length > 0 ? tavolinat.map((tav, index) => (
+                <div className='p-1  bg-blue-100 flex flex-row items-center justify-around w-[120px]'>
+                  <p key={index}>Tav. {tav.tableNumber}</p>
+                  <DeleteForever className='cursor-pointer text-red-600'  onClick={()=>removeEmp(item.id ,tav.tableNumber)}/>
+                </div>
+              )) : <p>Per momentin nuk ka ndonje tavoline te caktuar.</p>}
             </div>
             <div className='pt-[10px]'>
-            <p>Ndrysho</p>
-            <Select
-              required
-              multiple
-              value={selectedTables}
-              sx={{ minWidth: 200 }}
-              menuprops={{
-                style: { zIndex: 1400 }, // Ensure dropdown has a higher z-index
-              }}
-            >
-              {freeTables && freeTables.map((tav,index) => (
-              <Option key={index} value={tav.tableNumber}>Tav: {tav.tableNumber}</Option>
-              ))}
-            </Select>
+              <p>Tavolinat e lira:</p>
+              <div className='w-full h-auto flex flex-wrap justify-between '>
+                {Array.isArray(freeTables) && freeTables.map((tav, index) => (
+                  <div key={tav.id} className='p-1 bg-blue-100 flex flex-row items-center justify-around w-[120px]'>
+                    <p key={index}>Tav. {tav.tableNumber}</p>
+                    <AddBox className='cursor-pointer text-green-500' onClick={()=>addEmpTable(item.id, tav.tableNumber)}/>
+                  </div>
+                ))}
+              </div>
             </div>
            
           </div>
           <Button type='button' onClick={() => handleClose()}>Close</Button>
         </Box>
+        
       </Modal>
     </div>
   );

@@ -12,8 +12,7 @@ import Option from '@mui/joy/Option';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import axios from 'axios';
-import { DELETE_CATEGORY, DELETE_PRODUCT, GET_ALL_PRODUCTS } from '../../endpoints/MenuItems/MenuItemsEnd';
-import useQuery from '../hooks/useQuery';
+import { DELETE_CATEGORY, DELETE_PRODUCT } from '../../endpoints/MenuItems/MenuItemsEnd';
 
 // function createData(name, calories, fat, carbs, protein) {
 //   return { name, calories, fat, carbs, protein };

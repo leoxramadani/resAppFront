@@ -2,25 +2,42 @@ import React,{useEffect, useState} from 'react'
 import KamarierCard from '../../components/Cards/KamarierCard'
 import axios from 'axios';
 import { GET_ALL_KAMARIERAT } from '../../endpoints/Kamarierat/KamarieratEnd';
-    
+import useQuery from '../../components/hooks/useQuery';
+import { GET_FREE_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
+
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 const Kamarierat = () => {
 
 
-  const [kam,setKam] = useState([]);
 
+  const { data: kam,refetch:refetchKam } = useQuery(GET_ALL_KAMARIERAT);
+
+
+  const { data: freeTables,refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
 
   useEffect(() => {
-    const getKams = async () => {
-        try {
-            const res = await axios.get(GET_ALL_KAMARIERAT, { withCredentials: true });
-            setKam(res.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-    getKams();
+    refetchKam();
   }, []);
 
+
+  const [removeStatus,setRemoveStatus] = React.useState(false);
+  const [addTableStatus,setAddTableStatus] = React.useState(false);
+
+
+  React.useEffect(()=>{
+    if(removeStatus==true){
+      toast.success("Ndryshimi u krye me sukses!");
+      refetchFreeTables();
+      setRemoveStatus(false);
+    }
+    if(addTableStatus==true){
+      toast.success("Tavolina u ruajt me sukses");
+      refetchFreeTables();
+      setAddTableStatus(false);
+    }
+  },[removeStatus,addTableStatus])
 
     // const kamarierat = [
     //     {"key":1,"name":"Leotrim Ramadani","numri":"071799241","image":"https://i.pinimg.com/736x/54/72/d1/5472d1b09d3d724228109d381d617326.jpg"},
@@ -37,10 +54,11 @@ const Kamarierat = () => {
     <div>
          <p style={{textAlign:'center'}}>Zgjedhni nje kamarier dhe caktoni tavolinat e tij/saj</p>
         <div style={{width:"100vw",height:"auto",padding:"20px", display:"flex", flexDirection:"row",flexWrap:"wrap",justifyContent:"space-evenly",paddingTop:"15px"}}>
-            {kam.length >0 && kam.map((item,i)=>(
-                <KamarierCard item={item}/>
+            {Array.isArray(kam) && kam.map((item,i)=>(
+                <KamarierCard item={item} key={item.id} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} freeTables={freeTables}/>
             ))}
         </div>
+        <ToastContainer/>
     </div>
   )
 }

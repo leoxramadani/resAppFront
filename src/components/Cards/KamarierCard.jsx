@@ -6,10 +6,11 @@ import CardContent from '@mui/joy/CardContent';
 import Chip from '@mui/joy/Chip';
 import Typography from '@mui/joy/Typography';
 import BasicModal from '../Modals/BasicModal';
-import { GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
+import { GET_FREE_TABLES, GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
 import axios from 'axios';
+import useQuery from '../hooks/useQuery';
 
-export default function KamarierCard({item}) {
+export default function KamarierCard({freeTables,item,setAddTableStatus,setRemoveStatus}) {
 
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -26,22 +27,24 @@ export default function KamarierCard({item}) {
   };
 
 
-  const [tavolinat,setTavolinat] = React.useState();
-
-
+  const [tavolinat,setTavolinat] = React.useState([]);
+  
   const getTavolinat = async(id) => {
-    try{
-      console.log("id=",id)
-      const res = await axios.get(GET_MY_TABLES,
-                                 {params: { waiterId: id },
-                                 withCredentials: true}
-                                 );
-      setTavolinat(res.data);
-      console.log("res=",res.data)
-    }catch(error){
-      console.error("Error=",error);
+    try {
+      const res = await axios.get(`${GET_MY_TABLES}/${id}`);
+      setTavolinat(res.data || []);
+      console.log("res=", res.data);
+    } catch (error) {
+      console.error("Error fetching tavolinat:", error);
+      setTavolinat([]);
     }
   }
+
+
+  const [myId,setMyId] = React.useState(0);
+
+
+  const {refetch:refetchMyTables} = useQuery(GET_MY_TABLES+`/${myId}`)
 
 
 
@@ -59,7 +62,7 @@ export default function KamarierCard({item}) {
         color:'white',
         '&:hover': { boxShadow: 'md', borderColor: 'neutral.outlinedHoverBorder' },
       }}
-      onClick={()=>{handleOpen(item);getTavolinat(item.id)}}
+      onClick={()=>{handleOpen(item);getTavolinat(item.id);setMyId(item.id)}}
     >
       <AspectRatio ratio="1" sx={{ width: 90 }}>
         <img
@@ -96,7 +99,7 @@ export default function KamarierCard({item}) {
       </CardContent>
       
     </Card>
-    <BasicModal open={open} handleClose={handleClose} item={item} tavolinat={tavolinat}/>
+    <BasicModal open={open} freeTables={freeTables} handleClose={handleClose} refetchMyTables={refetchMyTables} item={item} tavolinat={tavolinat} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus}/>
     </>
     
   );
