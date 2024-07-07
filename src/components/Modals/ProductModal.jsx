@@ -9,10 +9,15 @@ import DialogTitle from '@mui/joy/DialogTitle';
 import Stack from '@mui/joy/Stack';
 import { Option, Select } from '@mui/joy';
 import axios from 'axios';
-import { CREATE_NEW_CATEGORY, CREATE_NEW_PRODUCT, GET_ALL_CATEGORIES } from '../../endpoints/MenuItems/MenuItemsEnd';
+import { CREATE_NEW_CATEGORY, CREATE_NEW_PRODUCT, GET_ALL_CATEGORIES, UPDATE_NEW_CATEGORY, UPDATE_PRODUCT} from '../../endpoints/MenuItems/MenuItemsEnd';
 
 
-export default function ProductModal({setOpen,open,modalType,rowType,displayedRowClicked,setCategoryCreateResult,setMenuItemCreateResult}) {
+export default function ProductModal(
+  {setCategoryUpdateResult,setMenuItemUpdateResult,
+    setDataType,setOpen,open,modalType,rowType,
+    displayedRowClicked,setCategoryCreateResult,
+    setMenuItemCreateResult,dataType,
+  refetchProducts,refetchCategories}) {
 
 
 const [categories,setCategories] = React.useState();
@@ -30,45 +35,68 @@ React.useEffect(()=>{
   getCategories();
 },[])
 
-//create new category
-
 const [newCategory,setNewCategory] = React.useState(displayedRowClicked?.name || "");
 const [newPrice,setNewPrice] = React.useState("");
 const [newCategoryId,setNewCategoryId] = React.useState();
 
 
 
+//create new category
 const createNewCategory = async (categoryName) => {
   try {
     const res = await axios.post(CREATE_NEW_CATEGORY, { categoryName: categoryName }, { withCredentials: true });
-    setCategoryCreateResult(res.data.data);
+    setCategoryCreateResult(res.status);
+    refetchCategories();
   } catch (error) {
     console.error("Error=", error);
   }
 };
+// update category
+const updateCategory = async(catName,catId) =>{
+  try{
+    const res = await axios.post(UPDATE_NEW_CATEGORY,{categoryName:catName,id:catId}, {withCredentials:true})
+    setCategoryUpdateResult(res.status);
+    refetchCategories();
+  }
+  catch(error){
+    console.error("Error=",error)
+  }
+}
 
-
+//create product
 const createNewProduct = async (newCategory,newCategoryId,newPrice) => {
   try{
     const res = await axios.post(CREATE_NEW_PRODUCT, {name: newCategory,price: newPrice, categoryId: newCategoryId}, {withCredentials:true});
-    setMenuItemCreateResult(res.data.data)
+    setMenuItemCreateResult(res.data.data);
+    refetchProducts();
   }catch(error){
     console.error("Error=",error)
   }
 };
-
+//update product
+const updateProduct = async(prodId,newCategory,newCategoryId,newPrice) => {
+  try{
+    console.log("proId=",prodId,",newCategory=",newCategory,",newCategoryId=",newCategoryId,",newPrice=",newPrice);
+    const res = await axios.post(UPDATE_PRODUCT,{id:prodId,name:newCategory,price:newPrice,categoryId:newCategoryId}, {withCredentials:true});
+    console.log("res=",res);
+    setMenuItemUpdateResult(res.data.data);
+    refetchProducts();
+  }
+  catch(error){
+    console.error("Error=",error);
+  }
+}
 
 const handleChange = (event, newValue) => {
   setNewCategoryId(newValue);
 };
 
-
-  console.log("displayedRowClicked=",displayedRowClicked)
+console.log("modalType=",modalType,",rowType=",rowType,",dataType=",dataType)
 
   return (
     <React.Fragment>
 
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={open} onClose={() => {setOpen(false);setDataType("")}}>
         <ModalDialog>
           <DialogTitle>
             {modalType !== 'null' && modalType == "Category" ? 
@@ -80,19 +108,33 @@ const handleChange = (event, newValue) => {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              modalType=="Category" ? createNewCategory(newCategory) : createNewProduct(newPrice,newCategoryId, newCategory)
+              if(dataType==="Products" && rowType === "Edit"){
+                console.log("here");
+                updateProduct(displayedRowClicked.id,newCategory,newCategoryId,newPrice)
+              }
+              else if(dataType==="Categories" && rowType ==="Edit"){
+                updateCategory(newCategory,displayedRowClicked.id)
+              }
+              else if(modalType=="Category" && dataType=="Categories"){
+                createNewCategory(newCategory);
+              }
+              else if(modalType="Products" && dataType=="Products"){
+                createNewProduct(newPrice,newCategoryId, newCategory)
+              }
+
+              // modalType=="Category" ? createNewCategory(newCategory) : createNewProduct(newPrice,newCategoryId, newCategory)
               setOpen(false);
             }}
           >
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>Emri i {modalType !== 'null' && modalType == "Category" ? "kategorise" : 'produktit'}</FormLabel>
+                <FormLabel>Emri i {modalType !== 'null' && modalType === "Category"  || dataType === "Categories" ? "kategorise" : 'produktit'}</FormLabel>
                 {rowType == "Edit" 
                 ? 
                 <Input 
                   autoFocus 
                   required 
-                  defaultValue={displayedRowClicked?.name}
+                  defaultValue={dataType == "Categories" ? displayedRowClicked?.categoryName : displayedRowClicked.name}
                   onChange={(e) => setNewCategory(e.target.value)}  
                 />
                 :
@@ -105,13 +147,16 @@ const handleChange = (event, newValue) => {
                 
                 } 
               </FormControl>
-              {modalType !== 'null' && modalType == "Products" || rowType == "Edit"? (
+              {modalType !== 'null' && modalType == "Products" &&  dataType == "Products"  
+              || dataType=="Products" && rowType == "Edit"? 
+              (
                 <>
                     <FormControl>
                     <FormLabel>Cmimi</FormLabel>
                     {rowType == "Edit" ? 
                       <Input required 
                              defaultValue={displayedRowClicked.price}
+                             onChange={(e)=> setNewPrice(e.target.value)}
                              
                       />
                       :
@@ -120,17 +165,16 @@ const handleChange = (event, newValue) => {
                       />
                     }
                     </FormControl>
-
                     <FormControl>
                     <FormLabel>Kategoria</FormLabel>
                     <Select
                       required
                       sx={{ minWidth: 200 }}
-                      defaultValue={displayedRowClicked.categoryId} // Ensure a default value is set
+                      defaultValue={typeof displayedRowClicked !=  "undefined" ? displayedRowClicked.categoryId : 0}
                       onChange={handleChange}
                     >
                         {rowType == "Edit" ? 
-                          <Option value={displayedRowClicked.categoryId} disabled>
+                          <Option value={displayedRowClicked != "undefined" ? displayedRowClicked.categoryId : 0} disabled>
                             {displayedRowClicked.categoryName}
                           </Option>
                           :
@@ -145,13 +189,9 @@ const handleChange = (event, newValue) => {
                     </Select>
                     </FormControl>
                 </>
-
-              
               ) : (
                 ""
               )}
-              
-              
               <Button type="submit">Ruaj</Button>
             </Stack>
           </form>

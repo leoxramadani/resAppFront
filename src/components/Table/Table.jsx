@@ -11,6 +11,9 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import axios from 'axios';
+import { DELETE_CATEGORY, DELETE_PRODUCT, GET_ALL_PRODUCTS } from '../../endpoints/MenuItems/MenuItemsEnd';
+import useQuery from '../hooks/useQuery';
 
 // function createData(name, calories, fat, carbs, protein) {
 //   return { name, calories, fat, carbs, protein };
@@ -23,8 +26,10 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 //   createData('4', 305, 3.7, 67, 4.3),
 // ];
 
-export default function TableColumnPinning({rows=[],open, setOpen,setRowType,setDisplayedRow,datafor}) {
-  console.log("rows=",rows)
+export default function TableColumnPinning({ rows = [], open, setOpen, refetchCategories, refetchProducts,setRowType, setDisplayedRow, datafor, setDataType, setCategoryDeleteResult,setMenuItemDeleteResult}) {
+
+
+
   function labelDisplayedRows({ from, to, count }) {
     return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
   }
@@ -50,14 +55,38 @@ export default function TableColumnPinning({rows=[],open, setOpen,setRowType,set
     setPage(newPage);
   };
 
-  const displayedRows = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const displayedRows = Array.isArray(rows) ? rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage) : [];
 
   const rowClicked = (param) => {
     setOpen(true);
     setRowType(param);
   };
 
-  
+  //delete category
+const deleteCategory = async(id) => {
+  try{
+    const res = await axios.delete(DELETE_CATEGORY+`/${id}`, {withCredentials:true})  
+    refetchCategories();
+    setCategoryDeleteResult(res.status.toString());
+  }catch(error){
+    console.error("Error=",error)
+  }
+}
+
+
+//delete product
+const deleteProduct = async(id) => {
+  try{
+    const res = await axios.delete(DELETE_PRODUCT+`/${id}`, {withCredentials:true})
+    console.log("here")
+    refetchProducts();
+    setMenuItemDeleteResult(res.status.toString());
+  }catch(error){
+    console.error("Error=",error)
+  }
+}
+
+
   
   return (
     <Box sx={{ width: '100%' }}>
@@ -136,24 +165,45 @@ export default function TableColumnPinning({rows=[],open, setOpen,setRowType,set
                   <td>{row.categoryName}</td>
                   <td>{row.name}</td>
                   <td>{row.price}</td>
+                  <td className='w-[200px]'>
+                  <Box sx={{ display: 'flex', gap: 1 , justifyContent:"center",width:"200"}}>
+                    <Button size="sm" variant="plain" color="neutral" onClick={()=>{rowClicked("Edit");setDisplayedRow(row);setDataType("Products")}}>
+                      Ndrysho
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="soft" 
+                      color="danger" 
+                      onClick={()=>{deleteProduct(row.id)}}
+                    >
+                      Fshije
+                    </Button>
+                  </Box>
+                </td>
                 </> : 
                   datafor == "categories" ? 
                   <>
                     <td>{row.id}</td>
                     <td>{row.categoryName}</td>
                     <td>{row.createdBy}</td>
-                  </> 
-                  : ""}
-                <td className='w-[200px]'>
+                    <td className='w-[200px]'>
                   <Box sx={{ display: 'flex', gap: 1 , justifyContent:"center",width:"200"}}>
-                    <Button size="sm" variant="plain" color="neutral" onClick={()=>{rowClicked("Edit");setDisplayedRow(row)}}>
+                    <Button size="sm" variant="plain" color="neutral" onClick={()=>{rowClicked("Edit");setDisplayedRow(row);setDataType("Categories")}}>
                       Ndrysho
                     </Button>
-                    <Button size="sm" variant="soft" color="danger" >
+                    <Button 
+                      size="sm" 
+                      variant="soft" 
+                      color="danger" 
+                      onClick={()=>{deleteCategory(row.id)}}
+                    >
                       Fshije
                     </Button>
                   </Box>
                 </td>
+                  </> 
+                  : ""}
+
               </tr>
             ))}
           </tbody>
@@ -177,11 +227,11 @@ export default function TableColumnPinning({rows=[],open, setOpen,setRowType,set
                   </Select>
                 </FormControl>
                 <Typography textAlign="center" sx={{ minWidth: 80 }}>
-                  {labelDisplayedRows({
-                    from: rows.length === 0 ? 0 : page * rowsPerPage + 1,
-                    to: getLabelDisplayedRowsTo(),
-                    count: rows.length === -1 ? -1 : rows.length,
-                  })}
+                {labelDisplayedRows({
+          from: Array.isArray(rows) && rows.length > 0 ? page * rowsPerPage + 1 : 0,
+          to: getLabelDisplayedRowsTo(rows, page, rowsPerPage),
+          count: Array.isArray(rows) ? rows.length : 0,
+        })}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <IconButton
@@ -199,7 +249,7 @@ export default function TableColumnPinning({rows=[],open, setOpen,setRowType,set
                     color="neutral"
                     variant="outlined"
                     disabled={
-                      rows.length !== -1
+                      Array.isArray(rows) && rows.length !== -1
                         ? page >= Math.ceil(rows.length / rowsPerPage) - 1
                         : false
                     }
