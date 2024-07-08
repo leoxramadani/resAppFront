@@ -13,7 +13,7 @@ import { MenuItem, Option, Select } from '@mui/joy';
 import axios from 'axios';
 import { CREATE_NEW_EMPLOYEE, GET_ALL_KAMARIERAT } from '../../endpoints/Kamarierat/KamarieratEnd';
 
-export default function KamarierModal({setOpen,open}) {
+export default function KamarierModal({setOpen,open,setEmployee}) {
 
 
     const { data: roles } = useQuery(GET_ALL_ROLES);
@@ -33,7 +33,7 @@ export default function KamarierModal({setOpen,open}) {
     const createNewEmployee= async (name,surname,roleId,username,password,contactInfo) => {
         try{
           const res = await axios.post(CREATE_NEW_EMPLOYEE, {name: name,surname: surname, roleId: roleId, username: username,password: password, contactInfo: contactInfo}, {withCredentials:true});
-          console.log("res=",res);
+          setEmployee(res.data.succeeded);
           refetchKam();
         }catch(error){
           console.error("Error=",error)
@@ -45,7 +45,6 @@ export default function KamarierModal({setOpen,open}) {
         setRoleId(newValue);
     };
 
-    console.log("roleId=",roleId,",name=",name,",surname=",surname,",username=",username,",password=",password,",contact=",contactInfo);
   return (
     <React.Fragment>
       <Modal open={open} onClose={() => setOpen(false)}>

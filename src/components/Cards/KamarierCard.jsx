@@ -9,9 +9,8 @@ import BasicModal from '../Modals/BasicModal';
 import { GET_FREE_TABLES, GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
 import axios from 'axios';
 import useQuery from '../hooks/useQuery';
-import { DeleteForever, DeleteForeverTwoTone, DeleteOutlineOutlined, DeleteSweep, RemoveCircleRounded } from '@mui/icons-material';
 
-export default function KamarierCard({freeTables,item,setAddTableStatus,setRemoveStatus}) {
+export default function KamarierCard({item,setAddTableStatus,setRemoveStatus,setEployeeResult}) {
 
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -47,6 +46,7 @@ export default function KamarierCard({freeTables,item,setAddTableStatus,setRemov
 
   const {refetch:refetchMyTables} = useQuery(GET_MY_TABLES+`/${myId}`)
 
+  const [modalType,setModalType] = React.useState("");
 
 
   return (
@@ -89,22 +89,13 @@ export default function KamarierCard({freeTables,item,setAddTableStatus,setRemov
         >
           {item.roleName}
         </Chip>
-        <Typography level="body-sm" aria-describedby="card-description" mb={1}>
-          <Link
-            overlay
-            underline="none"
-            href="#interactive-card"
-            sx={{ color: 'text.tertiary' }}
-          >
-            {item.contactInfo}
-          </Link>
-        </Typography>
+        
         {/* <KamarieratModal key={item.key} open={open} handleClose={handleClose} item={selectedItem}/> */}
         
       </CardContent>
       
     </Card>
-    <BasicModal open={open} freeTables={freeTables} handleClose={handleClose} refetchMyTables={refetchMyTables} item={item} tavolinat={tavolinat} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus}/>
+    <BasicModal open={open} handleClose={handleClose} refetchMyTables={refetchMyTables} item={item} tavolinat={tavolinat} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} setEployeeResult={setEployeeResult}/>
     </>
     
   );

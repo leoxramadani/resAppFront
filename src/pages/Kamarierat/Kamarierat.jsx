@@ -15,30 +15,37 @@ const Kamarierat = () => {
 
 
   const { data: kam,refetch:refetchKam } = useQuery(GET_ALL_KAMARIERAT);
-
-  const { data: freeTables,refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
-
-  useEffect(() => {
-    refetchKam();
-  }, []);
+  const {refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
 
 
   const [removeStatus,setRemoveStatus] = React.useState(false);
   const [addTableStatus,setAddTableStatus] = React.useState(false);
+  const [addEmployeeResult,setEmployee] = React.useState(false);
+  const [removeEmployeeResult,setEployeeResult] = React.useState(false);
 
 
-  React.useEffect(()=>{
+    React.useEffect(()=>{
     if(removeStatus==true){
       toast.success("Ndryshimi u krye me sukses!");
       refetchFreeTables();
       setRemoveStatus(false);
     }
-    if(addTableStatus==true){
+    else if (addTableStatus==true){
       toast.success("Tavolina u ruajt me sukses");
       refetchFreeTables();
       setAddTableStatus(false);
     }
-  },[removeStatus,addTableStatus])
+    else if(addEmployeeResult == true){
+      toast.success("Kamarieri u shtua me sukses")
+      setEmployee("");  
+      refetchKam();
+    }
+    else if(removeEmployeeResult == true){
+      toast.success("Kamarieri u fshie me sukses")
+      setEployeeResult("");
+      refetchKam();
+    }
+  },[removeStatus,addTableStatus,addEmployeeResult])
 
  
   
@@ -52,14 +59,15 @@ const Kamarierat = () => {
          <p style={{textAlign:'center'}}>Zgjedhni nje kamarier dhe caktoni tavolinat e tij/saj</p>
         <div style={{width:"100vw",height:"auto",padding:"20px", display:"flex", flexDirection:"row",flexWrap:"wrap",justifyContent:"space-evenly",paddingTop:"15px"}}>
             {Array.isArray(kam) && kam.map((item,i)=>(
-                <KamarierCard item={item} key={item.id} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} freeTables={freeTables}/>
+                <KamarierCard item={item} key={item.id} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} setEployeeResult={setEployeeResult}/>
             ))}
         </div>
-        <ToastContainer/>
+        
         <button className='w-[50px] h-[50px] bg-slate-200 fixed right-2 bottom-2 z-50 rounded-full border-blue-400 border-2'>
           <Add onClick={() => setOpen(true)}/>
         </button>
-        <KamarierModal setOpen={setOpen} open={open} />
+        <KamarierModal setOpen={setOpen} open={open} setEmployee={setEmployee}/>
+        <ToastContainer/>
     </div>
   )
 }

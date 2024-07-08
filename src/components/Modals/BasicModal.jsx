@@ -6,6 +6,7 @@ import axios from 'axios';
 import { ASSING_TABLE_WAITER, GET_FREE_TABLES, GET_MY_TABLES, REMOVE_WAITER_TABLE } from '../../endpoints/TableWaiters/TableWaitersEnd';
 import { Add, AddBox, CloseFullscreenOutlined, CloseSharp, DeleteForever, DeleteOutlineOutlined } from '@mui/icons-material';
 import useQuery from '../../components/hooks/useQuery';
+import { REMOVE_EMPLOYEE } from '../../endpoints/Kamarierat/KamarieratEnd';
 
 const style = {
   position: 'absolute',
@@ -21,10 +22,11 @@ const style = {
 
 };
 
-export default function BasicModal({refetchMyTables, open,freeTables, handleClose, item,tavolinat ,setRemoveStatus,setAddTableStatus}) {
+export default function BasicModal({refetchMyTables, open, handleClose, item,tavolinat ,setRemoveStatus,setAddTableStatus,setEployeeResult}) {
 
 
-  const { refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
+  const { data: freeTables,refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
+
 
   const removeEmp = async (waiterId, tableId) => {
     try {
@@ -50,6 +52,22 @@ const addEmpTable = async (waiterId,tableId) => {
     console.error("Error=",error);
   }
 }
+
+
+const deleteEmployee = async(empId) =>{
+  try{
+    if(empId.id){
+      const res = await axios.put(`${REMOVE_EMPLOYEE}/${empId.id}`, null, {withCredentials:true});
+      handleClose();
+      setEployeeResult(res.data.succeeded);
+    }
+
+  }catch(error){
+    console.error("Error=",error)
+  }
+
+}
+
   return (
     <div>
       <Modal
@@ -95,11 +113,13 @@ const addEmpTable = async (waiterId,tableId) => {
                 ))}
               </div>
             </div>
-           
           </div>
-        <DeleteOutlineOutlined className='text-red-200 absolute bottom-1 right-2 cursor-pointer  hover:bg-slate-200 hover:text-red-500 w-[30px] h-[30px] rounded-full'/>
+          <DeleteOutlineOutlined 
+            className='text-red-500 absolute bottom-1 right-2 cursor-pointer  hover:bg-slate-200 w-[30px] h-[30px] rounded-full'
+            onClick={() => deleteEmployee(item ?? item.id)}                    
+          />
 
-          <CloseSharp type='button' onClick={() => handleClose()} className='text-red-200 hover:text-red-500 cursor-pointer absolute bottom-1 left-2 bg-slate-200 rounded-full'/>
+          <CloseSharp type='button' onClick={() => handleClose()} className='text-red-500 cursor-pointer absolute bottom-1 left-2 hover:bg-slate-200 rounded-full'/>
 
         </Box>
         
