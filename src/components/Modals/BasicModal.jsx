@@ -4,7 +4,7 @@ import Modal from '@mui/material/Modal';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import { ASSING_TABLE_WAITER, GET_FREE_TABLES, GET_MY_TABLES, REMOVE_WAITER_TABLE } from '../../endpoints/TableWaiters/TableWaitersEnd';
-import { Add, AddBox, DeleteForever } from '@mui/icons-material';
+import { Add, AddBox, CloseFullscreenOutlined, CloseSharp, DeleteForever, DeleteOutlineOutlined } from '@mui/icons-material';
 import useQuery from '../../components/hooks/useQuery';
 
 const style = {
@@ -69,6 +69,10 @@ const addEmpTable = async (waiterId,tableId) => {
               <p>Numri</p>
               <p>{item.contactInfo}</p>
             </div>
+            <div className='flex w-full h-auto justify-between items-center flex-row' >
+              <p>Role</p>
+              <p>{item.roleName}</p>
+            </div>
           </div>
           <div>
             <p>Pergjegjes per tavolinat: </p>
@@ -76,7 +80,7 @@ const addEmpTable = async (waiterId,tableId) => {
               {tavolinat.length > 0 ? tavolinat.map((tav, index) => (
                 <div className='p-1  bg-blue-100 flex flex-row items-center justify-around w-[120px]'>
                   <p key={index}>Tav. {tav.tableNumber}</p>
-                  <DeleteForever className='cursor-pointer text-red-600'  onClick={()=>removeEmp(item.id ,tav.tableNumber)}/>
+                  <DeleteForever key={tav.number} className='cursor-pointer text-red-600'  onClick={()=>removeEmp(item.id ,tav.tableNumber)}/>
                 </div>
               )) : <p>Per momentin nuk ka ndonje tavoline te caktuar.</p>}
             </div>
@@ -93,7 +97,10 @@ const addEmpTable = async (waiterId,tableId) => {
             </div>
            
           </div>
-          <Button type='button' onClick={() => handleClose()}>Close</Button>
+        <DeleteOutlineOutlined className='text-red-200 absolute bottom-1 right-2 cursor-pointer  hover:bg-slate-200 hover:text-red-500 w-[30px] h-[30px] rounded-full'/>
+
+          <CloseSharp type='button' onClick={() => handleClose()} className='text-red-200 hover:text-red-500 cursor-pointer absolute bottom-1 left-2 bg-slate-200 rounded-full'/>
+
         </Box>
         
       </Modal>

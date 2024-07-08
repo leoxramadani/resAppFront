@@ -9,6 +9,7 @@ import BasicModal from '../Modals/BasicModal';
 import { GET_FREE_TABLES, GET_MY_TABLES } from '../../endpoints/TableWaiters/TableWaitersEnd';
 import axios from 'axios';
 import useQuery from '../hooks/useQuery';
+import { DeleteForever, DeleteForeverTwoTone, DeleteOutlineOutlined, DeleteSweep, RemoveCircleRounded } from '@mui/icons-material';
 
 export default function KamarierCard({freeTables,item,setAddTableStatus,setRemoveStatus}) {
 
@@ -76,6 +77,9 @@ export default function KamarierCard({freeTables,item,setAddTableStatus,setRemov
         <Typography level="title-lg" id="card-description" sx={{color:'b'}}>
           {item.name} {" "} {item.surname}
         </Typography>
+        <Typography level="title-lg" id="card-description" sx={{color:'b'}}>
+          {item.contactInfo}
+        </Typography>
 
         <Chip
           variant="outlined"
@@ -83,7 +87,7 @@ export default function KamarierCard({freeTables,item,setAddTableStatus,setRemov
           size="sm"
           sx={{ pointerEvents: 'none' }}
         >
-          {item.username}
+          {item.roleName}
         </Chip>
         <Typography level="body-sm" aria-describedby="card-description" mb={1}>
           <Link
@@ -96,6 +100,7 @@ export default function KamarierCard({freeTables,item,setAddTableStatus,setRemov
           </Link>
         </Typography>
         {/* <KamarieratModal key={item.key} open={open} handleClose={handleClose} item={selectedItem}/> */}
+        
       </CardContent>
       
     </Card>
