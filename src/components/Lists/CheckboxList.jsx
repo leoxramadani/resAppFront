@@ -21,7 +21,7 @@ export default function CheckboxList({obj,item, setOrderItems, order, setOrder})
   const handleIncrement = (value) => {
    setProductQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [value.key]: prevQuantities[value.key] + 1,
+      [value.id]: prevQuantities[value.id] + 1,
     }));
 
     setOrderItems((prev) => prev && prev.length > 0 ? [...prev, value] : [value]);
@@ -29,20 +29,20 @@ export default function CheckboxList({obj,item, setOrderItems, order, setOrder})
 
   const handleDecrement = (value) => {
     setProductQuantities((prevQuantities) => {
-      const newQuantity = Math.max(prevQuantities[value.key] - 1, 0);
+      const newQuantity = Math.max(prevQuantities[value.id] - 1, 0);
       return {
         ...prevQuantities,
-        [value.key]: newQuantity,
+        [value.id]: newQuantity,
       };
     });
   
     setOrderItems((prev) => {
-      const itemIndex = prev.findIndex(i => i.Name === value.Name);
+      const itemIndex = prev.findIndex(i => i.name === value.name);
       if (itemIndex !== -1) {
-        if (prev[itemIndex].Quantity > 1) {
+        if (prev[itemIndex].quantity > 1) {
           // Decrement the quantity
           return prev.map((item, index) =>
-            index === itemIndex ? { ...item, Quantity: item.Quantity - 1 } : item
+            index === itemIndex ? { ...item, quantity: item.quantity - 1 } : item
           );
         } else {
           // Remove the item from the order
@@ -56,23 +56,23 @@ export default function CheckboxList({obj,item, setOrderItems, order, setOrder})
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
       {obj.map((value) => {
-        const labelId = `checkbox-list-label-${value.key}`;
+        const labelId = `checkbox-list-label-${value.id}`;
 
         return (
           <ListItem
-            key={value.key}
+            key={value.id}
             secondaryAction={
               <div style={{ width: '80px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                         <RemoveCircleIcon
+                <RemoveCircleIcon
                   onClick={() => handleDecrement(value)}
                   style={{ cursor: 'pointer' }}
                 />
                 {/* <p style={{ margin: '0 10px' }}>{order ? order.map((i) => { if(i.Name === value.Name) {return i.Quantity} else return 0}) : productQuantities[value.key]}</p> */}
                 <p style={{ margin: '0 10px' }}>
-                  {order && order.filter(i => i.Name === value.Name).length > 0 ? order.filter(i => i.Name === value.Name)[0].Quantity  : productQuantities[value.key]}
+                  {order && order.filter(i => i.name === value.name).length > 0 ? order.filter(i => i.name === value.name)[0].quantity  : productQuantities[value.id] ? 0 : 0}
                 </p>
 
-                <AddBoxIcon
+                <AddBoxIcon 
                   edge="end"
                   aria-label="increment"
                   style={{ cursor: 'pointer' }}
@@ -89,7 +89,7 @@ export default function CheckboxList({obj,item, setOrderItems, order, setOrder})
               role={undefined}
               dense
             >
-              <ListItemText id={labelId} primary={`${value.Name}`} />
+              <ListItemText id={labelId} primary={`${value.name}`} />
             </ListItemButton>
           </ListItem>
         );

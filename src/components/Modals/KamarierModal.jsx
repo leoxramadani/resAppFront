@@ -33,7 +33,8 @@ export default function KamarierModal({setOpen,open,setEmployee}) {
     const createNewEmployee= async (name,surname,roleId,username,password,contactInfo) => {
         try{
           const res = await axios.post(CREATE_NEW_EMPLOYEE, {name: name,surname: surname, roleId: roleId, username: username,password: password, contactInfo: contactInfo}, {withCredentials:true});
-          setEmployee(res.data.succeeded);
+          console.log("res=",res.data)
+          setEmployee(res.data.data);
           refetchKam();
         }catch(error){
           console.error("Error=",error)

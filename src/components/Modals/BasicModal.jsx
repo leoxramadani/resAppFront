@@ -58,8 +58,9 @@ const deleteEmployee = async(empId) =>{
   try{
     if(empId.id){
       const res = await axios.put(`${REMOVE_EMPLOYEE}/${empId.id}`, null, {withCredentials:true});
+      console.log("res=",res.data)
       handleClose();
-      setEployeeResult(res.data.succeeded);
+      setEployeeResult(res.data.data);
     }
 
   }catch(error){
@@ -67,6 +68,7 @@ const deleteEmployee = async(empId) =>{
   }
 
 }
+
 
   return (
     <div>
@@ -114,10 +116,13 @@ const deleteEmployee = async(empId) =>{
               </div>
             </div>
           </div>
-          <DeleteOutlineOutlined 
-            className='text-red-500 absolute bottom-1 right-2 cursor-pointer  hover:bg-slate-200 w-[30px] h-[30px] rounded-full'
-            onClick={() => deleteEmployee(item ?? item.id)}                    
-          />
+
+          {item.roleName !== "Menaxher" && (
+            <DeleteOutlineOutlined 
+              className='text-red-500 absolute bottom-1 right-2 cursor-pointer hover:bg-slate-200 w-[30px] h-[30px] rounded-full'
+              onClick={() => deleteEmployee(item.id)}                    
+            />
+          )}
 
           <CloseSharp type='button' onClick={() => handleClose()} className='text-red-500 cursor-pointer absolute bottom-1 left-2 hover:bg-slate-200 rounded-full'/>
 

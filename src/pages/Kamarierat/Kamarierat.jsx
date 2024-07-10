@@ -9,12 +9,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { Add } from '@mui/icons-material';
 import KamarierModal from '../../components/Modals/KamarierModal';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const Kamarierat = () => {
 
 
 
-  const { data: kam,refetch:refetchKam } = useQuery(GET_ALL_KAMARIERAT);
+  const { data: kam,isLoading:loadingKamarierat,refetch:refetchKam } = useQuery(GET_ALL_KAMARIERAT);
   const {refetch:refetchFreeTables } = useQuery(GET_FREE_TABLES);
 
 
@@ -22,7 +24,6 @@ const Kamarierat = () => {
   const [addTableStatus,setAddTableStatus] = React.useState(false);
   const [addEmployeeResult,setEmployee] = React.useState(false);
   const [removeEmployeeResult,setEployeeResult] = React.useState(false);
-
 
     React.useEffect(()=>{
     if(removeStatus==true){
@@ -35,17 +36,26 @@ const Kamarierat = () => {
       refetchFreeTables();
       setAddTableStatus(false);
     }
-    else if(addEmployeeResult == true){
-      toast.success("Kamarieri u shtua me sukses")
+    else if(addEmployeeResult != ""){
+      if(addEmployeeResult.includes("Verejtje")){
+        toast.error(addEmployeeResult)
+      }else{
+        toast.success(addEmployeeResult)
+      }
       setEmployee("");  
       refetchKam();
     }
-    else if(removeEmployeeResult == true){
-      toast.success("Kamarieri u fshie me sukses")
+    else if(removeEmployeeResult != ""){
+      if(removeEmployeeResult.includes("sukses")){
+        toast.success(removeEmployeeResult)
+      }
+      else{
+        toast.error(removeEmployeeResult)
+      }
       setEployeeResult("");
       refetchKam();
     }
-  },[removeStatus,addTableStatus,addEmployeeResult])
+  },[removeStatus,addTableStatus,addEmployeeResult,removeEmployeeResult])
 
  
   
@@ -57,11 +67,16 @@ const Kamarierat = () => {
   return (
     <div>
          <p style={{textAlign:'center'}}>Zgjedhni nje kamarier dhe caktoni tavolinat e tij/saj</p>
-        <div style={{width:"100vw",height:"auto",padding:"20px", display:"flex", flexDirection:"row",flexWrap:"wrap",justifyContent:"space-evenly",paddingTop:"15px"}}>
-            {Array.isArray(kam) && kam.map((item,i)=>(
-                <KamarierCard item={item} key={item.id} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} setEployeeResult={setEployeeResult}/>
-            ))}
-        </div>
+         
+
+         {loadingKamarierat ? <Skeleton count={5} /> : 
+            <div style={{width:"100vw",height:"auto",padding:"20px", display:"flex", flexDirection:"row",flexWrap:"wrap",justifyContent:"space-evenly",paddingTop:"15px"}}>
+              {Array.isArray(kam) && kam.map((item,i)=>(
+                <KamarierCard item={item} key={item.id} setRemoveStatus={setRemoveStatus} setAddTableStatus={setAddTableStatus} setEployeeResult={setEployeeResult} />
+              ))}
+            </div>
+         }
+
         
         <button className='w-[50px] h-[50px] bg-slate-200 fixed right-2 bottom-2 z-50 rounded-full border-blue-400 border-2'>
           <Add onClick={() => setOpen(true)}/>

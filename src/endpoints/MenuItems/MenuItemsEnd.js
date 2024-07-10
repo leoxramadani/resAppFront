@@ -8,7 +8,7 @@ export const UPDATE_NEW_CATEGORY = `${process.env.REACT_APP_BASE_URL}api/Categor
 
 export const DELETE_CATEGORY = `${process.env.REACT_APP_BASE_URL}api/CategoryMenu/delete`
 
-export const GET_ALL_CATEGORIES_BY_ID = `${process.env.REACT_APP_BASE_URL}api/MenuItem/getAllMenuItemsByCategory`
+export const GET_ALL_MENUITEMS_BY_CATEGORY = `${process.env.REACT_APP_BASE_URL}api/MenuItem/getAllMenuItemsByCategory`
 
 export const CREATE_NEW_PRODUCT = `${process.env.REACT_APP_BASE_URL}api/MenuItem/register`
 

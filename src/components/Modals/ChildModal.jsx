@@ -1,51 +1,79 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import MenuCard from '../Cards/MenuCard';
-import CheckboxList from '../Lists/CheckboxList';
-import axios from 'axios';
-import { GET_ALL_CATEGORIES_BY_ID } from '../../endpoints/MenuItems/MenuItemsEnd';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+import CheckboxList from "../Lists/CheckboxList";
+import axios from "axios";
+import { GET_ALL_MENUITEMS_BY_CATEGORY } from "../../endpoints/MenuItems/MenuItemsEnd";
+import { CircularProgress } from "@mui/material";
 
+export default function ChildModal({
+  categoryId,
+  openChild,
+  handleCloseChild,
+  item,
+  menuClickedItem,
+  style,
+  setOrderItems,
+  order,
+  setOrder,
+}) {
+  //test
+  const [obj, setObj] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
-export default function ChildModal({ openChild, handleCloseChild, item ,menuClickedItem, style, setOrderItems, order, setOrder}) {
-//test
-  const [obj,setObj] = React.useState([]);
-  
-  React.useEffect(()=>{
-    try{
-      const getMenuItems = async (id) =>{
-        const res = await axios.get(GET_ALL_CATEGORIES_BY_ID, 
-          {params: { CategoryId: id },
-          withCredentials: true});
-          setObj(res.data);
+  React.useEffect(() => {
+    (async function getMenu() {
+      try {
+        setLoading(true);
+
+        const res = await axios.get(GET_ALL_MENUITEMS_BY_CATEGORY, {
+          params: { CategoryId: categoryId },
+          withCredentials: true,
+        });
+        setObj(res.data);
+      } catch (error) {
+        console.error("Error=", error);
+      } finally {
+        setLoading(false);
       }
-      getMenuItems(3);
-    }catch(error){
-      console.error("Error=",error)
-    }
-  },[])
+    })();
+  }, [categoryId]);
 
-  console.log("obj=",obj)
-
-  
-
-    return (
-      <React.Fragment>
-        <Modal
-          open={openChild}
-          onClose={handleCloseChild}
-          aria-labelledby="child-modal-title"
-          aria-describedby="child-modal-description"
-        >
-          <Box sx={{ ...style, width: 400, height:360 }}>
-            <p id="child-modal-description">
-              {menuClickedItem?.title}
-            </p>
-            <CheckboxList obj={obj} item={item} setOrderItems={setOrderItems} order={order} setOrder={setOrder}/>
-            <Button variant="contained" color="error" onClick={handleCloseChild}>Close</Button>
-          </Box>
-        </Modal>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <Modal
+        open={openChild}
+        onClose={handleCloseChild}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 400, height: 360 }}>
+          {loading ? (
+            <div className="flex h-[100%] w-full items-center justify-center">
+              <CircularProgress />
+            </div>
+          ) : (
+            <>
+              <p id="child-modal-description">{menuClickedItem?.title}</p>
+              <CheckboxList
+                obj={obj}
+                item={item}
+                setOrderItems={setOrderItems}
+                order={order}
+                setOrder={setOrder}
+              />
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleCloseChild}
+              >
+                Close
+              </Button>
+            </>
+          )}
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
+}

@@ -10,7 +10,8 @@ import { GET_FREE_TABLES, GET_MY_TABLES } from '../../endpoints/TableWaiters/Tab
 import axios from 'axios';
 import useQuery from '../hooks/useQuery';
 
-export default function KamarierCard({item,setAddTableStatus,setRemoveStatus,setEployeeResult}) {
+
+export default function KamarierCard({item,setAddTableStatus,setRemoveStatus,setEployeeResult,loadingKamarierat}) {
 
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -46,7 +47,32 @@ export default function KamarierCard({item,setAddTableStatus,setRemoveStatus,set
 
   const {refetch:refetchMyTables} = useQuery(GET_MY_TABLES+`/${myId}`)
 
-  const [modalType,setModalType] = React.useState("");
+  const getChipStyles = (roleName) => {
+    switch (roleName) {
+      case 'Kamarier':
+        return {
+          backgroundColor: 'green',
+          color: 'white', 
+        };
+      case 'Menaxher':
+        return {
+          backgroundColor: 'black',
+          color: 'white',
+          borderRadius: 'none' 
+        };
+      case 'Kuzhinier':
+        return {
+          backgroundColor: 'crimson',
+          color: 'white', 
+        };
+      default:
+        return {
+          backgroundColor: 'grey',
+          color: 'white', 
+        };
+    }
+  };
+  
 
 
   return (
@@ -85,7 +111,10 @@ export default function KamarierCard({item,setAddTableStatus,setRemoveStatus,set
           variant="outlined"
           color="primary"
           size="sm"
-          sx={{ pointerEvents: 'none' }}
+          sx={{ pointerEvents: 'none' ,
+          ...getChipStyles(item.roleName),
+          }}
+
         >
           {item.roleName}
         </Chip>

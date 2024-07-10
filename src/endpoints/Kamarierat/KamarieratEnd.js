@@ -2,4 +2,6 @@ export const GET_ALL_KAMARIERAT = `${process.env.REACT_APP_BASE_URL}api/Employee
 
 export const CREATE_NEW_EMPLOYEE = `${process.env.REACT_APP_BASE_URL}api/Employee/create`
 
+export const GET_KAMARIERI_INFO = `${process.env.REACT_APP_BASE_URL}api/Table/waiterInfo`
+
 export const REMOVE_EMPLOYEE = `${process.env.REACT_APP_BASE_URL}api/Employee/removeEmployee`;
