@@ -54,7 +54,7 @@ const NestedModal = React.forwardRef(({ open, handleClose, item }, ref) => {
   const [openChild, setOpenChild] = React.useState(false);
   const [orderItems, setOrderItems] = React.useState();
   const [order, setOrder] = React.useState();
-
+  const totalPrice = React.useRef(0);
   const [menuClickedItem, setMenuClickedItem] = React.useState([]);
 
   const handleOpenChild = (menuItem) => {
@@ -68,41 +68,42 @@ const NestedModal = React.forwardRef(({ open, handleClose, item }, ref) => {
   };
 
   React.useEffect(() => {
-    if (orderItems) {
+    if (orderItems && orderItems.length > 0) {
       const grouped = orderItems.reduce((acc, item) => {
         if (acc[item.name]) {
-          acc[item.name]++;
+          acc[item.name].quantity++;
         } else {
-          acc[item.name] = 1;
+          acc[item.name] = { ...item, quantity: 1 };
         }
         return acc;
       }, {});
 
       const result = Object.keys(grouped).map((name) => ({
-        name: name,
-        quantity: grouped[name],
+        ...grouped[name],
       }));
       setOrder(result);
+
+      const total = result.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      totalPrice.current = total;
+    } else {
+      totalPrice.current = 0;
+      setOrder([]);
     }
-    // setOrder(orderItems.reduce(
-    //   (prev, current) => ({
-    //     ...prev.Name,
-    //     [current]: [...(prev[current] || []), current.Name],
-    //   }),
-    //   {}
-    // ));
   }, [orderItems]);
 
-  React.useImperativeHandle(ref, () => {
-    return {
-      setOrder,
-      setOrderItems,
-    };
-  });
+  React.useImperativeHandle(ref, () => ({
+    setOrder,
+    setOrderItems,
+  }));
 
   const { data: waiterInfo, refetch: refetchMyTables } = useQuery(
     GET_KAMARIERI_INFO + `/${item && item.id}`
   );
+
+  console.log("orderItems=", orderItems);
 
   return (
     <Modal
@@ -114,24 +115,22 @@ const NestedModal = React.forwardRef(({ open, handleClose, item }, ref) => {
       <Box sx={{ ...style }}>
         <div className="flex justify-between ">
           <div className="w-[50%] h-auto flex flex-col justify-center">
-            <div className="w-full h-auto flex flex-row justify-between bg-red-200">
+            <div className="w-full h-auto flex flex-col justify-between border-b-2 border-red-200">
               <h1>Kamarieri: {waiterInfo && waiterInfo.username}</h1>
-              <h5>Total: 500</h5>
+              <h5>Total: {totalPrice.current}</h5>
             </div>
             <h1 id="parent-modal-title">
               {item ? item.title : "No item selected"}
             </h1>
             <h1>Porosia: </h1>
-            <div>
+            <div className="w-full h-[100px]  overflow-y-scroll">
               {order && order.length > 0
                 ? order.map((item) => (
-                    <>
-                      <ol>
-                        <li key={item.name}>
-                          {item.name} {":"} {item.quantity}
-                        </li>
-                      </ol>
-                    </>
+                    <ol key={item.name}>
+                      <li>
+                        {item.name}: {item.quantity}
+                      </li>
+                    </ol>
                   ))
                 : ""}
             </div>
