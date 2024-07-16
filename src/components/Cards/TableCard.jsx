@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
@@ -7,6 +7,8 @@ import NestedModal from "./../Modals/NestedModal.jsx";
 import useQuery from "../hooks/useQuery.js";
 import { GET_ALL_TABLES } from "../../endpoints/Tables/Tables.js";
 import { CircularProgress } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function TableCard() {
   const ref = useRef();
@@ -32,9 +34,22 @@ export default function TableCard() {
     setSelectedItem(null);
   };
 
-  console.log("loadingTables=", loadingTables);
+  const [orderFoodMsg, setOrderFoodMsg] = useState(false);
+
+  useEffect(() => {
+    if (orderFoodMsg == true) {
+      console.log("true");
+      toast.success("Porosia u krye me sukses!");
+      setOrderFoodMsg(false);
+      refetchTables();
+      setOpen(false);
+    }
+  }, [orderFoodMsg]);
+
+  console.log("orderFoodMsg=", orderFoodMsg);
   return (
     <div>
+      <ToastContainer />
       {loadingTables ? (
         <div className="flex h-[100vh]    w-full items-center justify-center ">
           <CircularProgress />
@@ -92,6 +107,7 @@ export default function TableCard() {
         handleClose={handleClose}
         item={selectedItem}
         ref={ref}
+        setOrderFoodMsg={setOrderFoodMsg}
       />
     </div>
   );
