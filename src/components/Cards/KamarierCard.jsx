@@ -35,22 +35,13 @@ export default function KamarierCard({
     setOpen(false);
   };
 
-  const [tavolinat, setTavolinat] = React.useState([]);
-
-  const getTavolinat = async (id) => {
-    try {
-      const res = await axios.get(`${GET_MY_TABLES}/${id}`);
-      setTavolinat(res.data || []);
-      console.log("res=", res.data);
-    } catch (error) {
-      console.error("Error fetching tavolinat:", error);
-      setTavolinat([]);
-    }
-  };
-
   const [myId, setMyId] = React.useState(0);
 
-  const { refetch: refetchMyTables } = useQuery(GET_MY_TABLES + `/${myId}`);
+  const {
+    data: tavolinat,
+    refetch: refetchMyTables,
+    isLoading: isLoadingMyTables,
+  } = useQuery(GET_MY_TABLES + `/${myId}`);
 
   const getChipStyles = (roleName) => {
     switch (roleName) {
@@ -97,7 +88,6 @@ export default function KamarierCard({
         }}
         onClick={() => {
           handleOpen(item);
-          getTavolinat(item.id);
           setMyId(item.id);
         }}
       >
@@ -143,6 +133,7 @@ export default function KamarierCard({
         handleClose={handleClose}
         refetchMyTables={refetchMyTables}
         item={item}
+        isLoadingMyTables={isLoadingMyTables}
         tavolinat={tavolinat}
         setRemoveStatus={setRemoveStatus}
         setAddTableStatus={setAddTableStatus}

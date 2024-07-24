@@ -46,7 +46,6 @@ export default function TableCard() {
     }
   }, [orderFoodMsg]);
 
-  console.log("orderFoodMsg=", orderFoodMsg);
   return (
     <div>
       <ToastContainer />

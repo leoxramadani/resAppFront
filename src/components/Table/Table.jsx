@@ -16,6 +16,7 @@ import {
   DELETE_CATEGORY,
   DELETE_PRODUCT,
 } from "../../endpoints/MenuItems/MenuItemsEnd";
+import { DeleteForever, EditNoteSharp } from "@mui/icons-material";
 
 // function createData(name, calories, fat, carbs, protein) {
 //   return { name, calories, fat, carbs, protein };
@@ -169,14 +170,11 @@ export default function TableColumnPinning({
                 </>
               ) : datafor == "categories" ? (
                 <>
-                  <th style={{ width: "25%", textAlign: "center" }}>Id</th>
-                  <th style={{ width: "25%", textAlign: "center" }}>
+                  <th style={{ width: "33%", textAlign: "center" }}>Id</th>
+                  <th style={{ width: "33%", textAlign: "center" }}>
                     Kategoria
                   </th>
-                  <th style={{ width: "25%", textAlign: "center" }}>
-                    Krijuar nga
-                  </th>
-                  <th style={{ width: "25%", textAlign: "center" }}>
+                  <th style={{ width: "34%", textAlign: "center" }}>
                     Ndryshimet
                   </th>
                 </>
@@ -232,7 +230,6 @@ export default function TableColumnPinning({
                     <>
                       <td>{row.id}</td>
                       <td>{row.categoryName}</td>
-                      <td>{row.createdBy}</td>
                       <td className="w-[200px]">
                         <Box
                           sx={{
@@ -252,7 +249,7 @@ export default function TableColumnPinning({
                               setDataType("Categories");
                             }}
                           >
-                            Ndrysho
+                            <EditNoteSharp /> Ndrysho
                           </Button>
                           <Button
                             size="sm"
@@ -262,7 +259,7 @@ export default function TableColumnPinning({
                               deleteCategory(row.id);
                             }}
                           >
-                            Fshije
+                            <DeleteForever /> Fshije
                           </Button>
                         </Box>
                       </td>
