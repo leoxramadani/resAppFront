@@ -28,6 +28,7 @@ const Kamarierat = () => {
     if (removeStatus == true) {
       toast.success("Ndryshimi u krye me sukses!");
       refetchFreeTables();
+      console.log("test1");
       setRemoveStatus(false);
     } else if (addTableStatus == true) {
       toast.success("Tavolina u ruajt me sukses");
@@ -50,6 +51,7 @@ const Kamarierat = () => {
       setEployeeResult("");
       refetchKam();
     }
+    refetchFreeTables();
   }, [removeStatus, addTableStatus, addEmployeeResult, removeEmployeeResult]);
 
   const [open, setOpen] = React.useState(false);

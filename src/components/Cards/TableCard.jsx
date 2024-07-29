@@ -9,6 +9,8 @@ import { GET_ALL_TABLES } from "../../endpoints/Tables/Tables.js";
 import { CircularProgress } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Add } from "@mui/icons-material";
+import TavolinaModal from "../../components/Modals/TavolinaModal.jsx";
 
 export default function TableCard() {
   const ref = useRef();
@@ -45,6 +47,18 @@ export default function TableCard() {
       setOpen(false);
     }
   }, [orderFoodMsg]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [tableOutput, setTableOutput] = useState("");
+
+  useEffect(() => {
+    if (tableOutput == "Success") {
+      toast.success("Tavolina u krijua me sukses!");
+      setTableOutput("");
+      refetchTables();
+    }
+  }, [tableOutput]);
 
   return (
     <div>
@@ -100,6 +114,15 @@ export default function TableCard() {
             ))}
         </Grid>
       )}
+
+      <button className="w-[50px] h-[50px] bg-slate-200 fixed right-2 bottom-2 z-50 rounded-full border-blue-400 border-2">
+        <Add onClick={() => setModalOpen(true)} />
+      </button>
+      <TavolinaModal
+        setModalOpen={setModalOpen}
+        modalOpen={modalOpen}
+        setTableOutput={setTableOutput}
+      />
 
       <NestedModal
         open={open}

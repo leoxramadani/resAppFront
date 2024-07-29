@@ -88,11 +88,17 @@ export default function BasicModal({
         console.log("res=", res.data);
         handleClose();
         setEployeeResult(res.data.data);
+        refetchFreeTables();
+        refetchMyTables();
       }
     } catch (error) {
       console.error("Error=", error);
     }
   };
+
+  React.useEffect(() => {
+    refetchFreeTables();
+  }, [open]);
 
   return (
     <div>
@@ -118,7 +124,7 @@ export default function BasicModal({
               <p>{item.contactInfo}</p>
             </div>
             <div className="flex w-full h-auto justify-between items-center flex-row">
-              <p>Role</p>
+              <p>Roli</p>
               <p>{item.roleName}</p>
             </div>
           </div>
