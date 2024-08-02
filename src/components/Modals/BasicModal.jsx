@@ -81,8 +81,9 @@ export default function BasicModal({
 
   const deleteEmployee = async (empId) => {
     try {
-      if (empId.id) {
-        const res = await axios.put(`${REMOVE_EMPLOYEE}/${empId.id}`, null, {
+      console.log("test=", empId);
+      if (empId !== 0 || empId !== null) {
+        const res = await axios.put(`${REMOVE_EMPLOYEE}/${empId}`, null, {
           withCredentials: true,
         });
         console.log("res=", res.data);

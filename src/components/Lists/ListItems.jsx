@@ -15,6 +15,7 @@ import axios from "axios";
 import { CHANGE_ORDER_STATUS } from "../../endpoints/OrderItems/OrderItemsEnd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import formatDate from "../../components/constants/formatDate";
 
 export default function ListItems({ item }) {
   const selectOptions = [
@@ -103,6 +104,19 @@ export default function ListItems({ item }) {
                   variant="body2"
                   color="text.primary"
                 >
+                  <div className="flex justify-start items-center flex-row">
+                    <p>Koha e porosise: </p>
+                    <p className="font-semibold ml-2">
+                      {formatDate(item?.orderTime)}
+                    </p>
+                  </div>
+                  <div className="flex justify-start items-center flex-row">
+                    <p>Numri i tavolines:</p>
+                    <b className="text-[18px] font-semibold ml-2">
+                      {item?.tableNr}
+                    </b>
+                  </div>
+
                   <div className="w-full flex flex-col  ">
                     <div className="flex flex-row justify-evenly w-full border-slate-300 border-solid border-2 border-t-0">
                       <p className="w-[33%] flex justify-center items-center">

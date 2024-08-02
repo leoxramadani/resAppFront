@@ -61,7 +61,19 @@ export default function CheckboxList({
   };
 
   return (
-    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+    <List
+      sx={{
+        width: "100%",
+        maxWidth: 400,
+        height: "300px",
+        overflowY: "scroll",
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        flexDirection: "column",
+        py: 0,
+      }}
+    >
       {obj.map((value) => {
         const labelId = `checkbox-list-label-${value.id}`;
 
@@ -101,9 +113,12 @@ export default function CheckboxList({
             }
             disablePadding
           >
-            <ListItemButton role={undefined} dense>
-              <ListItemText id={labelId} primary={`${value.name}`} />
-            </ListItemButton>
+            <ListItemText
+              id={labelId}
+              primary={`${value.name}`}
+              sx={{ color: "red" }}
+              primaryTypographyProps={{ fontSize: "18px" }}
+            />
           </ListItem>
         );
       })}

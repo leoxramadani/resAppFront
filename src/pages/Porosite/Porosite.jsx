@@ -38,7 +38,7 @@ function Porosite() {
 
     connection.current
       .start()
-      .then(() => console.log("SignalR Connected."))
+      .then()
       .catch((err) =>
         console.error("SignalR Connection Error: ", err.toString())
       );
@@ -72,7 +72,7 @@ function Porosite() {
 
     statusConnection.current
       .start()
-      .then(() => console.log("SignalR Connected."))
+      .then()
       .catch((err) =>
         console.error("SignalR Connection Error: ", err.toString())
       );
@@ -88,7 +88,6 @@ function Porosite() {
       }
     };
   }, []);
-
   return (
     <>
       <ToastContainer

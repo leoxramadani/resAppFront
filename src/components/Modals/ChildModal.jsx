@@ -39,7 +39,6 @@ export default function ChildModal({
       }
     })();
   }, [categoryId]);
-
   return (
     <React.Fragment>
       <Modal
@@ -48,7 +47,17 @@ export default function ChildModal({
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: 400, height: 360 }}>
+        <Box
+          sx={{
+            ...style,
+            height: obj && obj.length >= 4 ? 350 : 200,
+            maxWidth: 400,
+            paddingX: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
           {loading ? (
             <div className="flex h-[100%] w-full items-center justify-center">
               <CircularProgress />
@@ -68,7 +77,7 @@ export default function ChildModal({
                 color="error"
                 onClick={handleCloseChild}
               >
-                Close
+                Mbylle
               </Button>
             </>
           )}
