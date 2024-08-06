@@ -96,7 +96,7 @@ function Porosite() {
         draggable
         containerId={"1"}
       />
-      <div className="w-[100vw] h-auto flex flex-wrap p-5 justify-around flex-row">
+      <div className="w-[100vw] h-auto flex flex-wrap p-5 justify-around flex-row gap-5">
         {isLoadingOrders ? (
           <div>
             <CircularProgress />
