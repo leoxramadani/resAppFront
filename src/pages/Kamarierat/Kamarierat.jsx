@@ -10,8 +10,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { Add } from "@mui/icons-material";
 import KamarierModal from "../../components/Modals/KamarierModal";
 import { CircularProgress } from "@mui/material";
+import { useAuth } from "../../auth/tokenUtils";
 
 const Kamarierat = () => {
+  const auth = useAuth();
+
+  console.log("auth=", auth);
+
   const {
     data: kam,
     isLoading: loadingKamarierat,
