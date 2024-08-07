@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Add } from "@mui/icons-material";
 import TavolinaModal from "../../components/Modals/TavolinaModal.jsx";
+import { useAuth } from "../../auth/tokenUtils.js";
 
 export default function TableCard() {
   const ref = useRef();

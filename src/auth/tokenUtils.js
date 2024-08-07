@@ -20,7 +20,7 @@ export const useAuth = () => {
   const decodedToken = decodeToken(token);
 
   if (!token || !decodedToken) {
-    navigate("/login");
+    // navigate("/login");
     return null;
   }
 

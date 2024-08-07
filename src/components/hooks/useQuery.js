@@ -1,5 +1,6 @@
-import axios from 'axios';
-import { useEffect, useState, useCallback } from 'react';
+import axios from "axios";
+import { useEffect, useState, useCallback } from "react";
+import { getToken } from "../../auth/tokenUtils";
 
 const useQuery = (url) => {
   const [state, setState] = useState({
@@ -7,13 +8,21 @@ const useQuery = (url) => {
     isLoading: true,
     isSuccess: false,
     isError: false,
-    error: '',
+    error: "",
   });
 
   const fetchData = useCallback(() => {
     setState((s) => ({ ...s, isLoading: true }));
 
-    axios.get(url)
+    const token = getToken();
+
+    console.log("token=", token);
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setState((s) => ({
           ...s,
@@ -21,7 +30,7 @@ const useQuery = (url) => {
           isLoading: false,
           isSuccess: true,
           isError: false,
-          error: '',
+          error: "",
         }));
       })
       .catch((err) => {
@@ -30,7 +39,7 @@ const useQuery = (url) => {
           data: null,
           isLoading: false,
           isError: true,
-          error: err.message || 'Failed to fetch',
+          error: err.message || "Failed to fetch",
         }));
       });
   }, [url]);

@@ -11,10 +11,7 @@ import Input from "@mui/joy/Input";
 export default function ListItems({ item }) {
   const selectOptions = [
     { value: "New", label: "New" },
-    { value: "Recieved", label: "Recieved" },
-    { value: "Ready for Pickup", label: "Ready for Pickup" },
     { value: "In preparation", label: "In preparation" },
-    { value: "Served", label: "Served" },
     { value: "Completed", label: "Completed" },
     { value: "Cancelled", label: "Cancelled" },
   ];
@@ -61,7 +58,6 @@ export default function ListItems({ item }) {
     }
     if (pagesaNumber === 0 || pagesaNumber === "") setKusuriNumber(0);
   }, [pagesaNumber]);
-
   return (
     <>
       <div
@@ -72,22 +68,26 @@ export default function ListItems({ item }) {
           <p className="font-semibold"># {item?.id}</p>
           <p className="text-slate-500">Detajet e porosise</p>
         </div>
-        <div className="w-full h-auto  flex flex-col items-start mt-4">
-          <p>Numri i tavolines</p>
-          <p className="border-t-0 border-2 border-slate-400 px-4">
-            {" "}
-            # {item?.tableNr}
-          </p>
+        <div className="w-full h-auto  flex flex-row items-start mt-4">
+          <div className="w-full h-auto  flex flex-col items-start mt-4">
+            <p>Numri i tavolines</p>
+            <p className="border-t-0 border-2 border-slate-400 px-4">
+              {" "}
+              # {item?.tableNr}
+            </p>
+          </div>
+          <div className="w-full h-auto  flex flex-col items-start mt-4">
+            <p>Emri i kamarierit</p>
+            <p className="border-t-0 border-2 border-slate-400 px-4">
+              {" "}
+              {item?.waiterUsername}
+            </p>
+          </div>
         </div>
         <div className="w-full h-auto  flex flex-row justify-between mt-1">
           <div className="w-auto h-auto flex flex-col">
             <p className="  text-slate-500">Koha e porosise</p>
             <p className="text-[17px]">{formatDate(item?.orderTime)}</p>
-          </div>
-          <div className="w-auto h-auto flex flex-col">
-            <p className=" text-slate-500">Pagesa</p>
-            {/* <p className="p-2 bg-rose-500 text-white">E kryer</p> */}
-            <p className="p-2 bg-green-500 text-white">E kryer</p>
           </div>
           <div className="w-auto h-auto flex flex-col">
             <p className="text-slate-500">Statusi</p>

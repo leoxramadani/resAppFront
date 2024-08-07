@@ -100,6 +100,7 @@ const NestedModal = React.forwardRef(
     } = useQuery(GET_KAMARIERI_INFO + `/${item && item.id}`);
 
     const orderFunction = async (order, waiterId, tableId) => {
+      console.log("waiterId=", waiterId);
       try {
         if (order != null && waiterId != null && tableId) {
           const url = `${ORDER_FOOD}?${tableId ? `tableId=${tableId}&` : ""}${

@@ -15,7 +15,7 @@ export const Login = () => {
     try {
       const response = await axios.post(LOGIN, { username, password });
       localStorage.setItem("token", response.data.token);
-      navigate("/tables");
+      navigate("/porosite");
     } catch (error) {
       console.error("Invalid credentials");
     }
@@ -59,7 +59,7 @@ export const Login = () => {
                 </div>
                 <div>
                   <label
-                    for="password"
+                    htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Password
