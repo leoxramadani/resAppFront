@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import formatDate from "../../components/constants/formatDate";
 import Input from "@mui/joy/Input";
 
-export default function ListItems({ item }) {
+export default function ListItems({ item, setStatusSucceeded }) {
   const selectOptions = [
     { value: "New", label: "New" },
     { value: "In preparation", label: "In preparation" },
@@ -25,6 +25,7 @@ export default function ListItems({ item }) {
     setStatus(event.target.value);
     setItemId(itemId);
     setTempStatus(1);
+    setButtonClicked(1);
   };
 
   const changeStatus = async (orderId, tempStatus) => {
@@ -33,8 +34,7 @@ export default function ListItems({ item }) {
         params: { orderId: orderId, statusName: tempStatus },
         withCredentials: true,
       });
-      setItemId(0);
-      setTempStatus(0);
+      setStatusSucceeded(res.data.data);
     } catch (error) {
       console.error("Error=", error);
     } finally {
@@ -44,6 +44,14 @@ export default function ListItems({ item }) {
 
   React.useEffect(() => {
     if (itemId !== 0 && status !== "" && buttonClicked !== 0) {
+      console.log(
+        "itemid=",
+        itemId,
+        ",status=",
+        status,
+        ",buttonClicked=",
+        buttonClicked
+      );
       changeStatus(itemId, status);
     }
   }, [buttonClicked]);

@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Porosite() {
   const [isClicked, setIsClicked] = useState(false);
-  const [status, setStatus] = useState("");
+  const [status, setStatusSucceeded] = useState("");
 
   const {
     data: allOrders,
@@ -66,7 +66,7 @@ function Porosite() {
 
     statusConnection.current.on("changeOrder", (result) => {
       setStatusResult((prevResults) => [...prevResults, result]);
-      toast.success("Order status changed!");
+      toast.success(status);
       refetchAllOrders();
     });
 
@@ -103,7 +103,13 @@ function Porosite() {
             <CircularProgress />
           </div>
         ) : allOrders && allOrders.length > 0 ? (
-          allOrders.map((item) => <ListItems key={item.id} item={item} />)
+          allOrders.map((item) => (
+            <ListItems
+              key={item.id}
+              item={item}
+              setStatusSucceeded={setStatusSucceeded}
+            />
+          ))
         ) : (
           <p>No orders yet!</p>
         )}
